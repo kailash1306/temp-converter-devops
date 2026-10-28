@@ -2,12 +2,17 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-def celsius_to_fahrenheit(celsius):
-    return (celsius * 9/5) + 32
-
+# Simple JSON Home Page (No HTML)
 @app.route('/', methods=['GET'])
 def home():
-    return "welcome to homepage"
+    return jsonify({
+        "status": "Online",
+        "service": "Temperature Converter API",
+        "active_version": "Push 1 Deployment",
+        "endpoints": {
+            "POST /convert/c-to-f": "Expects json like {'celsius': 0}"
+        }
+    })
 
 @app.route('/convert/c-to-f', methods=['POST'])
 def c_to_f():
@@ -16,7 +21,8 @@ def c_to_f():
         return jsonify({"error": "Missing 'celsius' value."}), 400
     try:
         c = float(data['celsius'])
-        return jsonify({"celsius": c, "fahrenheit": celsius_to_fahrenheit(c)})
+        f = (c * 9/5) + 32
+        return jsonify({"celsius": c, "fahrenheit": f})
     except ValueError:
         return jsonify({"error": "Invalid numerical value."}), 400
 
