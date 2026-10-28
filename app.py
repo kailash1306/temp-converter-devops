@@ -5,19 +5,18 @@ app = Flask(__name__)
 def celsius_to_fahrenheit(celsius):
     return (celsius * 9/5) + 32
 
-@app.route('/convert', methods=['POST'])
-def convert():
-    data = request.get_json()
+@app.route('/', methods=['GET'])
+def home():
+    return "welcome to homepage"
+
+@app.route('/convert/c-to-f', methods=['POST'])
+def c_to_f():
+    data = request.get_json(silent=True)
     if not data or 'celsius' not in data:
-        return jsonify({"error": "Please provide a 'celsius' value."}), 400
-    
+        return jsonify({"error": "Missing 'celsius' value."}), 400
     try:
         c = float(data['celsius'])
-        f = celsius_to_fahrenheit(c)
-        return jsonify({
-            "celsius": c,
-            "fahrenheit": f
-        })
+        return jsonify({"celsius": c, "fahrenheit": celsius_to_fahrenheit(c)})
     except ValueError:
         return jsonify({"error": "Invalid numerical value."}), 400
 
